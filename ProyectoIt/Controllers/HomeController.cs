@@ -13,9 +13,9 @@ namespace ProyectoIt.Controllers
             _logger = logger;
         }
 
-        public IActionResult Index()
+        public ActionResult Index()
         {
-            return View();
+            return Ok("Hola Mundo");
         }
 
         public IActionResult Privacy()
