@@ -1,5 +1,5 @@
 ﻿@{
-    Layout = null;
+	Layout = null;
 }
 
 <!doctype html>
@@ -25,33 +25,28 @@
 			<div class="row justify-content-center">
 				<div class="col-md-6 col-lg-4">
 					<div class="login-wrap p-0">
-						<h3 class="mb-4 text-center">Tienes una cuenta?</h3>
+						<h3 class="mb-4 text-center">Crear cuenta</h3>
 						<form action="Home/Index" class="signin-form" method="post">
 							<div class="form-group">
-								<input type="text" class="form-control" placeholder="Mail" name="Mail" required>
+								<input type="text" class="form-control" placeholder="Ingrese el nombre" name="Nombre" required>
 							</div>
 							<div class="form-group">
-								<input id="password-field" type="password" class="form-control" placeholder="Contraseña" name="Clave" required>
-								<span toggle="#password-field" class="fa fa-fw fa-eye field-icon toggle-password"></span>
+								<input type="text" class="form-control" placeholder="Ingrese el apellido" name="Apellido" required>
 							</div>
 							<div class="form-group">
-								<button type="submit" class="form-control btn btn-primary submit px-3">Ingresar</button>
+								<input type="date" class="form-control" name="FechaNacimiento" required>
 							</div>
 							<div class="form-group">
-								<p class="error-login">@ViewBag.ErrorLogin</p>
+								<input type="password" class="form-control" placeholder="Ingrese la contraseña" name="Clave" required>
 							</div>
-							<div class="form-group d-md-flex">
-								<div class="w-50 text-md-left">
-									<a style="color: #fff" asp-controller="Login" asp-action="CrearCuenta">Crear Cuenta</a>
-								</div>
-								<div class="w-50 text-md-right">
-									<a style="color: #fff" asp-controller="Login" asp-action="OlvidoClave">Olvido su contraseña</a>
-								</div>
+							<div class="form-group">
+								<input type="text" class="form-control" placeholder="Ingrese el mail" name="Mail" required>
+							</div>
+							<div class="form-group">
+								<button type="submit" class="form-control btn btn-primary submit px-3" placeholder="Ingrese el mail">Crear Usuario</button>
 							</div>
 						</form>
-						<p class="w-100 text-center">&mdash; O ingresar con &mdash;</p>
-						<div class="social d-flex text-center">
-							<a asp-controller="Login" asp-action="LoginGoogle" class="px-2 py-2 mr-md-1 rounded"><span class="ion-logo-google mr-2"></span> Google</a>
+						<div>
 						</div>
 					</div>
 				</div>
