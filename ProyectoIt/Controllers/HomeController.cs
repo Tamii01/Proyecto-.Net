@@ -15,7 +15,7 @@ namespace ProyectoIt.Controllers
 
         public ActionResult Index()
         {
-            return Ok("Hola Mundo");
+            return View();
         }
 
         public IActionResult Privacy()
