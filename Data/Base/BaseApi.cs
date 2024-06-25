@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Data.Entities
+namespace Data.Base
 {
-    internal class Class1
-    {
-    }
+	public class BaseApi
+	{
+	}
 }

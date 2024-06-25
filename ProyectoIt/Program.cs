@@ -1,3 +1,5 @@
+using Data;
+
 namespace ProyectoIt
 {
     public class Program
@@ -5,9 +7,9 @@ namespace ProyectoIt
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
-
-            // Add services to the container.
-            builder.Services.AddControllersWithViews();
+			ApplicationDbContext.ConnectionString = builder.Configuration.GetConnectionString("ApplicationDbContext");
+			// Add services to the container.
+			builder.Services.AddControllersWithViews();
 
             var app = builder.Build();
 

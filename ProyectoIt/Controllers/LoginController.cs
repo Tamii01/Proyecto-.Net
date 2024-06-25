@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Data.Manager;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ProyectoIt.Controllers
@@ -17,7 +18,17 @@ namespace ProyectoIt.Controllers
 
 		public ActionResult LoginGoogle()
 		{
-			return RedirectToAction("Index", "Home");
+			var usuariosManager = new UsuariosManager();
+			var usuarios = usuariosManager.BuscarListaAsync();
+			if(usuarios.Result.Count > 0)
+			{
+				return RedirectToAction("Index", "Home");
+			}
+			else
+			{
+				return RedirectToAction("Login", "Login");
+			}
+			
 		}
 
 		public ActionResult Logout()
