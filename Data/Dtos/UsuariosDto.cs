@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Data.Entities
 {
-	public class Usuarios
+	public class UsuariosDto
 	{
 		public int Id { get; set; }
 		public string Nombre { get; set; }
@@ -20,31 +20,18 @@ namespace Data.Entities
 		public int? Codigo { get; set; }
 		public bool Activo { get; set; }
 
-		public static implicit operator Usuarios(CrearCuentaDto crearCuentaDto)
+		public static implicit operator UsuariosDto(Usuarios crearCuentaDto)
 		{
-			var usuario = new Usuarios();
+			var usuario = new UsuariosDto();
+			usuario.Id = crearCuentaDto.Id;
 			usuario.Nombre = crearCuentaDto.Nombre;
 			usuario.Apellido = crearCuentaDto.Apellido;
-			usuario.Fecha_Nacimiento = crearCuentaDto.FechaNacimiento;
+			usuario.Fecha_Nacimiento = crearCuentaDto.Fecha_Nacimiento;
 			usuario.Clave = crearCuentaDto.Clave;
+			usuario.Codigo = crearCuentaDto.Codigo;
 			usuario.Mail = crearCuentaDto.Mail;
 			usuario.Id_Rol = crearCuentaDto.Id_Rol;
 			usuario.Activo = crearCuentaDto.Activo;
-			return usuario;
-		}
-
-		public static implicit operator Usuarios(UsuariosDto recuperarCuentaDto)
-		{
-			var usuario = new Usuarios();
-			usuario.Id = recuperarCuentaDto.Id;
-			usuario.Nombre = recuperarCuentaDto.Nombre;
-			usuario.Apellido = recuperarCuentaDto.Apellido;
-			usuario.Fecha_Nacimiento = recuperarCuentaDto.Fecha_Nacimiento;
-			usuario.Clave = recuperarCuentaDto.Clave;
-			usuario.Codigo = recuperarCuentaDto.Codigo;
-			usuario.Mail = recuperarCuentaDto.Mail;
-			usuario.Id_Rol = recuperarCuentaDto.Id_Rol;
-			usuario.Activo = recuperarCuentaDto.Activo;
 			return usuario;
 		}
 	}

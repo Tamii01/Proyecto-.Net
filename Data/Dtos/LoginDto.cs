@@ -6,7 +6,13 @@ using System.Threading.Tasks;
 
 namespace Data.Dtos
 {
-    internal class Class1
-    {
+	public class LoginDto
+	{
+		public string? Mail {  get; set; }
+
+		public string? Password { get; set; }
+
+        public int Codigo { get; set; }
+
     }
 }

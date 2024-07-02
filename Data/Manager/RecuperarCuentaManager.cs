@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace Data.Manager
 {
-	public class UsuariosManager : BaseManager<Usuarios>
+	public class RecuperarCuentaManager : BaseManager<Usuarios>
 	{
 		public override Task<bool> Borrar(Usuarios usuarios)
 		{
@@ -18,7 +18,7 @@ namespace Data.Manager
 		}
 		public async override Task<Usuarios> BuscarAsync(LoginDto loginDto)
 		{
-			return await contextSingleton.Usuarios.FirstOrDefaultAsync(x => x.Activo == true && x.Mail == loginDto.Mail && x.Clave == loginDto.Password);
+			return await contextSingleton.Usuarios.FirstOrDefaultAsync(x => x.Mail == loginDto.Mail);
 		}
 
 		public async override Task<List<Usuarios>> BuscarListaAsync()

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Data.Dtos;
 using Microsoft.EntityFrameworkCore;
 
 namespace Data.Base
@@ -24,7 +25,7 @@ namespace Data.Base
 		}
 
 		public abstract Task<List<T>> BuscarListaAsync();
-		public abstract Task<List<T>> BuscarAsync(T entity);
+		public abstract Task<T> BuscarAsync(LoginDto entity);
 		public abstract Task<bool> Borrar(T entity);
 
 
