@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Data.Dtos;
+﻿using Data.Dtos;
 using Microsoft.EntityFrameworkCore;
 
 namespace Data.Base
@@ -12,7 +7,7 @@ namespace Data.Base
 	{
 		private static ApplicationDbContext contextInstance = null;
 
-		public static ApplicationDbContext contextSingleton
+        public static ApplicationDbContext contextSingleton
 		{
 			get
 			{
@@ -48,7 +43,7 @@ namespace Data.Base
 
 		public async Task<bool> Eliminar (T entity)
 		{
-			contextSingleton.Entry(entity).State |= EntityState.Modified;
+			contextSingleton.Entry(entity).State = EntityState.Modified;
 			var resultado = await contextSingleton.SaveChangesAsync() > 0;
 			return resultado;
 		}

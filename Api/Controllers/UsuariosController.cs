@@ -1,6 +1,5 @@
 ﻿using Api.Services;
 using Data.Dtos;
-using Data.Entities;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Api.Controllers

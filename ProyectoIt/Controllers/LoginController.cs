@@ -1,11 +1,8 @@
 ﻿using Data.Base;
 using Data.Dtos;
-using Data.Entities;
 using Data.Manager;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ProyectoIt.Services;
-using System.ComponentModel;
 
 namespace ProyectoIt.Controllers
 {
