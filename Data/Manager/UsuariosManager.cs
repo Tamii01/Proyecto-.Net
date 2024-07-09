@@ -16,7 +16,12 @@ namespace Data.Manager
 			return await contextSingleton.Usuarios.FirstOrDefaultAsync(x => x.Activo == true && x.Mail == loginDto.Mail && x.Clave == loginDto.Password);
 		}
 
-		public async override Task<List<Usuarios>> BuscarListaAsync()
+        public async  Task<Usuarios> BuscarUsuarioAsync(LoginDto loginDto)
+        {
+            return await contextSingleton.Usuarios.FirstOrDefaultAsync(x => x.Activo == true && x.Mail == loginDto.Mail);
+        }
+
+        public async override Task<List<Usuarios>> BuscarListaAsync()
 		{
 			return await contextSingleton.Usuarios.Where(x => x.Activo == true).ToListAsync();
 		}

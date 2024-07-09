@@ -1,4 +1,7 @@
 using Data;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.Google;
 
 namespace ProyectoIt
 {
@@ -16,6 +19,22 @@ namespace ProyectoIt
                 config.BaseAddress = new Uri(builder.Configuration["Url:Api"]);
             });
 
+            builder.Services.AddAuthentication(option =>
+            {
+                option.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                option.DefaultAuthenticateScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                option.DefaultChallengeScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+
+            }).AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, config =>
+            {
+
+            }).AddGoogle(GoogleDefaults.AuthenticationScheme, option =>
+            {
+                option.ClientId = builder.Configuration["Authentications:Google:ClientId"];
+                option.ClientSecret = builder.Configuration["Authentications:Google:ClientSecret"];
+                option.ClaimActions.MapJsonKey("urn:google:picture", "picture", "url");
+            });
+
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
@@ -31,6 +50,7 @@ namespace ProyectoIt
             app.UseStaticFiles();
             app.UseRouting();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.MapControllerRoute(

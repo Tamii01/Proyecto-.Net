@@ -13,8 +13,9 @@ namespace Data.Manager
 		}
 		public async override Task<Usuarios> BuscarAsync(LoginDto loginDto)
 		{
-			return await contextSingleton.Usuarios.FirstOrDefaultAsync(x => x.Mail == loginDto.Mail);
-		}
+			return loginDto.Password != null ? await contextSingleton.Usuarios.FirstOrDefaultAsync(x => x.Codigo == loginDto.Codigo && x.Mail == loginDto.Mail) : await contextSingleton.Usuarios.FirstOrDefaultAsync(x => x.Mail == loginDto.Mail);
+
+        }
 
 		public async override Task<List<Usuarios>> BuscarListaAsync()
 		{

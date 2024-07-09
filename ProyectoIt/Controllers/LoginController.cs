@@ -1,8 +1,14 @@
 ﻿using Data.Base;
 using Data.Dtos;
+using Data.Entities;
 using Data.Manager;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc;
 using ProyectoIt.Services;
+using System.Net;
+using System.Net.Mail;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.Google;
 
 namespace ProyectoIt.Controllers
 {
@@ -10,12 +16,15 @@ namespace ProyectoIt.Controllers
 	{
 
 		private readonly IHttpClientFactory _httpClientFactory;
+		private readonly IConfiguration _configuration;
+		private readonly SmtpClient _smtpClient;
 
-		public LoginController(IHttpClientFactory httpClientFactory)
+		public LoginController(IHttpClientFactory httpClientFactory, IConfiguration configuration )
 		{
 			_httpClientFactory = httpClientFactory;
-
-		}
+			_configuration = configuration;
+            _smtpClient = new SmtpClient();
+        }
 
 		public ActionResult CrearCuenta()
 		{
@@ -64,19 +73,45 @@ namespace ProyectoIt.Controllers
 		}
 
 
-		public ActionResult LoginGoogle()
+		public async Task LoginGoogle()
 		{
-			var usuariosManager = new UsuariosManager();
-			var usuarios = usuariosManager.BuscarListaAsync();
-			if (usuarios.Result.Count > 0)
+
+			await HttpContext.ChallengeAsync(GoogleDefaults.AuthenticationScheme, new AuthenticationProperties()
 			{
-				return RedirectToAction("Index", "Home");
+				RedirectUri = Url.Action("GoogleResponse")
+			});await HttpContext.ChallengeAsync(GoogleDefaults.AuthenticationScheme, new AuthenticationProperties()
+			{
+				RedirectUri = Url.Action("GoogleResponse")
+			});
+		}
+
+		public async Task<ActionResult> GoogleResponse()
+		{
+			
+			
+			var resultado = await HttpContext.AuthenticateAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+
+
+			var claims = resultado.Principal.Identities.FirstOrDefault().Claims.Select(claim => new
+			{
+				claim.Value
+			});
+
+			var login = new LoginDto();
+			login.Mail = claims.ToList()[4].Value;
+
+			var usuarioServicio = new UsuariosService();
+			var usuario = usuarioServicio.BuscarUsuario(login).Result;
+			
+			if(usuario != null)
+			{
+                return RedirectToAction("Index", "Home");
 			}
 			else
 			{
-				return RedirectToAction("Login", "Login");
-			}
-
+                return RedirectToAction("Login", "Login");
+            }
+            
 		}
 
 		public ActionResult Logout()
@@ -96,21 +131,82 @@ namespace ProyectoIt.Controllers
 
 		public async Task<ActionResult> EnviarMail(LoginDto loginDto)
 		{
-
-			var guid = Guid.NewGuid();
-			 var numeros = new String(guid.ToString().Where(Char.IsDigit).ToArray());
+            var recuperarCuenta = new RecuperarCuentaService();
+            var resultadoCuenta = false;
+            var guid = Guid.NewGuid();
+			var numeros = new String(guid.ToString().Where(Char.IsDigit).ToArray());
 			var seed = int.Parse(numeros.Substring(0, 6));
 			var random = new Random(seed);
 			var codigo = random.Next(000000, 999999);
 
-			var recuperarCuenta = new RecuperarCuentaService();
 			var usuario = await recuperarCuenta.BuscarUsuarios(loginDto);
 			if(usuario != null)
 			{
 				usuario.Codigo = codigo;
-				recuperarCuenta.GuardarUsuario(usuario);
-			} 
+                resultadoCuenta = recuperarCuenta.GuardarUsuario(usuario);
+			}
+
+			if (resultadoCuenta)
+			{
+				var mail = new MailMessage();
+
+				mail.From = new MailAddress(_configuration["ConfiguracionMail:Usuario"]);
+				mail.To.Add(loginDto.Mail);
+				mail.Subject = "Codigo de recuperacion EducacionIT";
+				mail.Body = CuerpoMail(codigo);
+				mail.IsBodyHtml = true;
+				mail.Priority = MailPriority.Normal;
+
+				_smtpClient.Host = _configuration["ConfiguracionMail:DireccionServidor"];
+				_smtpClient.Port = int.Parse(_configuration["ConfiguracionMail:Puerto"]);
+				_smtpClient.EnableSsl = bool.Parse(_configuration["ConfiguracionMail:Ssl"]);
+				_smtpClient.UseDefaultCredentials = false;
+				_smtpClient.Credentials = new NetworkCredential(_configuration["ConfiguracionMail:Usuario"], _configuration["ConfiguracionMail:Clave"]);
+
+				_smtpClient.Send(mail);
+
+                TempData["Mail"] = loginDto.Mail;
+            }
+
+
 			return RedirectToAction("RecuperarCuenta", "Login"); 
 		}
-	}
+
+		private static string CuerpoMail(int codigo)
+		{
+			var mensaje = "<strong>A continuacion se mostrara un codigo que debera ingresar en la web de Educacion IT </strong>";
+			mensaje += $"<strong>{codigo}</strong><br>";
+			return mensaje;
+		}
+
+
+		public async Task<ActionResult> CambiarClave (LoginDto loginDto)
+		{
+			loginDto.Mail = TempData["Mail"].ToString();
+
+            var recuperarCuenta = new RecuperarCuentaService();
+			var usuario = await recuperarCuenta.BuscarUsuarios(loginDto);
+			var resultadoCuenta = false;
+			if(usuario != null)
+			{
+				var usuarioDto = new UsuariosDto();
+				usuarioDto = usuario;
+				usuarioDto.Codigo = null;
+				usuarioDto.Clave = loginDto.Password;
+				resultadoCuenta = recuperarCuenta.GuardarUsuario(usuarioDto);
+			}
+
+			if (resultadoCuenta)
+			{
+                TempData["ErrorLogin"] = "Se ha cambiado la clave correctamente";
+                return RedirectToAction("Login", "Login");
+			}
+			else
+			{
+				TempData["ErrorLogin"] = "El codigo ingresado no coincide con el enviado al mail";
+                return RedirectToAction("Login", "Login");
+            }
+
+        }
+    }
 }

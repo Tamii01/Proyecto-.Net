@@ -16,6 +16,7 @@ namespace ProyectoIt.Services
 
 		public async Task<Usuarios> BuscarUsuarios(LoginDto loginDto)
 		{
+
 			return await _manager.BuscarAsync(loginDto);
 		}
 
