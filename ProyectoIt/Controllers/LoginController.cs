@@ -2,6 +2,7 @@
 using Data.Dtos;
 using Data.Entities;
 using Data.Manager;
+using Common.Helpers;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc;
 using ProyectoIt.Services;
@@ -9,6 +10,7 @@ using System.Net;
 using System.Net.Mail;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.Google;
+using System.Security.Claims;
 
 namespace ProyectoIt.Controllers
 {
@@ -57,12 +59,27 @@ namespace ProyectoIt.Controllers
 
 		}
 
-		public ActionResult LoginLocal(LoginDto login)
+		public async Task<ActionResult> LoginLocal(LoginDto login)
 		{
 			var usuariosManager = new UsuariosManager();
 			var usuarios = usuariosManager.BuscarAsync(login);
 			if (usuarios.Result != null)
 			{
+				var identity = new ClaimsIdentity(CookieAuthenticationDefaults.AuthenticationScheme, ClaimTypes.Name, ClaimTypes.Role);
+				Claim claimNombre = new(ClaimTypes.Name, usuarios.Result.Nombre);
+				Claim claimRole = new(ClaimTypes.Role, usuarios.Result.Roles.Nombre);
+				Claim claimEmail= new(ClaimTypes.Email, usuarios.Result.Mail);
+
+				identity.AddClaim(claimNombre);
+				identity.AddClaim(claimRole);
+				identity.AddClaim(claimEmail);
+
+				var usuarioPrincipal = new ClaimsPrincipal(identity);
+				
+				await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, usuarioPrincipal, new AuthenticationProperties
+				{
+					ExpiresUtc = DateTime.Now.AddYears(1),
+				}); 
 				return RedirectToAction("Index", "Home");
 			}
 			else
@@ -114,8 +131,9 @@ namespace ProyectoIt.Controllers
             
 		}
 
-		public ActionResult Logout()
+		public async Task<ActionResult> Logout()
 		{
+			await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
 			return RedirectToAction("Login", "Login");
 		}
 
@@ -192,7 +210,7 @@ namespace ProyectoIt.Controllers
 				var usuarioDto = new UsuariosDto();
 				usuarioDto = usuario;
 				usuarioDto.Codigo = null;
-				usuarioDto.Clave = loginDto.Password;
+				usuarioDto.Clave = EncryptHelper.Encriptar(loginDto.Password);
 				resultadoCuenta = recuperarCuenta.GuardarUsuario(usuarioDto);
 			}
 

@@ -1,4 +1,6 @@
 ﻿using Data.Dtos;
+using Common.Helpers;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Data.Entities
 {
@@ -9,18 +11,20 @@ namespace Data.Entities
 		public string Apellido { get; set; }
 		public DateTime Fecha_Nacimiento { get; set; }
 		public string Mail { get; set; }
+		[ForeignKey("Roles")]
 		public int Id_Rol { get; set; }
 		public string Clave { get; set; }
 		public int? Codigo { get; set; }
 		public bool Activo { get; set; }
+        public Roles? Roles { get; set; }
 
-		public static implicit operator Usuarios(CrearCuentaDto crearCuentaDto)
+        public static implicit operator Usuarios(CrearCuentaDto crearCuentaDto)
 		{
 			var usuario = new Usuarios();
 			usuario.Nombre = crearCuentaDto.Nombre;
 			usuario.Apellido = crearCuentaDto.Apellido;
 			usuario.Fecha_Nacimiento = crearCuentaDto.FechaNacimiento;
-			usuario.Clave = crearCuentaDto.Clave;
+			usuario.Clave = EncryptHelper.Encriptar(crearCuentaDto.Clave);
 			usuario.Mail = crearCuentaDto.Mail;
 			usuario.Id_Rol = crearCuentaDto.Id_Rol;
 			usuario.Activo = crearCuentaDto.Activo;

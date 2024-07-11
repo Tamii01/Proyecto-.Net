@@ -1,4 +1,5 @@
-﻿using Data.Dtos;
+﻿using Common.Helpers;
+using Data.Dtos;
 using Microsoft.EntityFrameworkCore;
 
 namespace Data.Base
@@ -26,27 +27,45 @@ namespace Data.Base
 		//Utiliza entity Framework para guardar un usuario en la base.
 		public async Task<bool> Guardar(T entity, int id)
 		{
-			if(id == 0)
+			try
 			{
-				contextSingleton.Entry(entity).State = EntityState.Added;
-			}
-			else
-			{
-				contextSingleton.Entry(entity).State = EntityState.Modified;
-			}
+				if (id == 0)
+				{
+					contextSingleton.Entry(entity).State = EntityState.Added;
+				}
+				else
+				{
+					contextSingleton.Entry(entity).State = EntityState.Modified;
+				}
 
-			var resultado = await contextSingleton.SaveChangesAsync() > 0;
+				var resultado = await contextSingleton.SaveChangesAsync() > 0;
 
-			contextSingleton.Entry(entity).State = EntityState.Detached;
-			return resultado;
+				contextSingleton.Entry(entity).State = EntityState.Detached;
+				return resultado;
+			}
+			catch (Exception ex) {
+				GenerateLogHelper.LogError(ex, "BaseManager", "Guardar");
+                return false;
+            }
+
+			
 		}
 
 		public async Task<bool> Eliminar (T entity)
 		{
-			contextSingleton.Entry(entity).State = EntityState.Modified;
-			var resultado = await contextSingleton.SaveChangesAsync() > 0;
-			return resultado;
-		}
+			try
+			{
+                contextSingleton.Entry(entity).State = EntityState.Modified;
+                var resultado = await contextSingleton.SaveChangesAsync() > 0;
+                return resultado;
+            }
+            catch (Exception ex)
+            {
+                GenerateLogHelper.LogError(ex, "BaseManager", "Guardar");
+                return false;
+            }
+
+        }
 
 	}
 }

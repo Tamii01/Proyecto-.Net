@@ -27,13 +27,25 @@ namespace ProyectoIt
 
             }).AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, config =>
             {
-
+                config.Events.OnRedirectToLogin = context =>
+                {
+                    context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+                    context.Response.Redirect(builder.Configuration["Url:Login"]);
+                    return Task.CompletedTask;
+                };
             }).AddGoogle(GoogleDefaults.AuthenticationScheme, option =>
             {
                 option.ClientId = builder.Configuration["Authentications:Google:ClientId"];
                 option.ClientSecret = builder.Configuration["Authentications:Google:ClientSecret"];
                 option.ClaimActions.MapJsonKey("urn:google:picture", "picture", "url");
             });
+
+            builder.Services.AddAuthorization(option =>
+            {
+
+            });
+
+            builder.Services.AddSession();
 
             var app = builder.Build();
 
@@ -52,6 +64,8 @@ namespace ProyectoIt
 
             app.UseAuthentication();
             app.UseAuthorization();
+
+            app.UseSession();
 
             app.MapControllerRoute(
                 name: "default",
