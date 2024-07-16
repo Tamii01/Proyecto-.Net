@@ -61,6 +61,11 @@ namespace ProyectoIt.Controllers
 
 		public async Task<ActionResult> LoginLocal(LoginDto login)
 		{
+
+			//var baseapi = new BaseApi(_httpClientFactory);
+			//var token = await baseapi.PostToApi("Authenticate/Login", login);
+			//var resultadoLogin = token as OkObjectResult;
+
 			var usuariosManager = new UsuariosManager();
 			var usuarios = usuariosManager.BuscarAsync(login);
 			if (usuarios.Result != null)

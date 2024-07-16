@@ -6,12 +6,23 @@ namespace Api.Services
 {
 	public class UsuariosService
 	{
-		public async Task<bool> GuardarUsuario (CrearCuentaDto crearCuentaDto)
+		private readonly UsuariosManager _manager;
+
+        public UsuariosService()
+        {
+            _manager = new UsuariosManager();
+        }
+        public async Task<bool> GuardarUsuario (CrearCuentaDto crearCuentaDto)
 		{
-			var usuariosManager = new UsuariosManager();
 			var usuario = new Usuarios();
 			usuario = crearCuentaDto;
-			return await usuariosManager.Guardar(usuario, 0);
+			return await _manager.Guardar(usuario, 0);
 		}
+
+		public async Task<List<Usuarios>> BuscarUsuarios()
+		{
+			return await _manager.BuscarListaAsync();
+
+        }
 	}
 }

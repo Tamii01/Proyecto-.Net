@@ -46,7 +46,7 @@ namespace Data.Manager
         {
             try
             {
-                return await contextSingleton.Usuarios.Where(x => x.Activo == true).ToListAsync();
+                return await contextSingleton.Usuarios.Where(x => x.Activo == true).Include(x=> x.Roles).ToListAsync();
 
             }
             catch (Exception ex)
