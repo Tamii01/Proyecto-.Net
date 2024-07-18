@@ -1,2 +1,10 @@
-﻿body {
+﻿.editarUsuario {
+    color: blue;
+    font-size: 20px;
+    margin-right: 10px;
+}
+
+.eliminarUsuario {
+    color:red;
+    font-size: 20px
 }

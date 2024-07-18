@@ -21,9 +21,10 @@ namespace Data.Entities
         public static implicit operator Usuarios(CrearCuentaDto crearCuentaDto)
 		{
 			var usuario = new Usuarios();
+			usuario.Id = crearCuentaDto.Id;
 			usuario.Nombre = crearCuentaDto.Nombre;
 			usuario.Apellido = crearCuentaDto.Apellido;
-			usuario.Fecha_Nacimiento = crearCuentaDto.FechaNacimiento;
+			usuario.Fecha_Nacimiento = crearCuentaDto.Fecha_Nacimiento;
 			usuario.Clave = EncryptHelper.Encriptar(crearCuentaDto.Clave);
 			usuario.Mail = crearCuentaDto.Mail;
 			usuario.Id_Rol = crearCuentaDto.Id_Rol;

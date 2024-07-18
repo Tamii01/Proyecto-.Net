@@ -17,15 +17,14 @@ namespace Api.Controllers
         }
 
         [HttpPost]
-		[Authorize]
 		[Route("CrearUsuario")]
 		public async Task<bool> CrearUsuario (CrearCuentaDto crearCuentaDto)
 		{
 			return await _services.GuardarUsuario(crearCuentaDto);
 		}
 
-	
-		[HttpGet]
+
+        [HttpGet]
 		[Route("BuscarUsuario")]
 		public async Task<List<Usuarios>> BuscarUsuarios()
 		{

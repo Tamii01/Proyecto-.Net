@@ -16,7 +16,7 @@ namespace Api.Services
 		{
 			var usuario = new Usuarios();
 			usuario = crearCuentaDto;
-			return await _manager.Guardar(usuario, 0);
+			return await _manager.Guardar(usuario, crearCuentaDto.Id);
 		}
 
 		public async Task<List<Usuarios>> BuscarUsuarios()
