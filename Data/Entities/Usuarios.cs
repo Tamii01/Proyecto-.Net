@@ -25,7 +25,7 @@ namespace Data.Entities
 			usuario.Nombre = crearCuentaDto.Nombre;
 			usuario.Apellido = crearCuentaDto.Apellido;
 			usuario.Fecha_Nacimiento = crearCuentaDto.Fecha_Nacimiento;
-			usuario.Clave = EncryptHelper.Encriptar(crearCuentaDto.Clave);
+			usuario.Clave = crearCuentaDto.Clave;
 			usuario.Mail = crearCuentaDto.Mail;
 			usuario.Id_Rol = crearCuentaDto.Id_Rol;
 			usuario.Activo = crearCuentaDto.Activo;

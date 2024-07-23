@@ -9,10 +9,10 @@ namespace ProyectoIt.Controllers
 {
     public class UsuariosController : Controller
     {
-        private readonly IHttpClientFactory _httpClientFactory;
+        private readonly BaseApi _baseApi;
         public UsuariosController(IHttpClientFactory httpClientFactory)
         {
-            _httpClientFactory = httpClientFactory;
+            _baseApi = new BaseApi(httpClientFactory);
         }
 
         public IActionResult Usuarios()
@@ -24,8 +24,7 @@ namespace ProyectoIt.Controllers
         public async Task<IActionResult> UsuariosAddPartial([FromBody] UsuariosDto usuarioDto)
         {
             var usuariosViewModel = new UsuariosViewModel();
-            var baseApi = new BaseApi(_httpClientFactory);
-            var roles = await baseApi.GetToApi("Roles/BuscarRoles");
+            var roles = await _baseApi.GetToApi("Roles/BuscarRoles");
             var resultadoRoles = roles as OkObjectResult;
 
             if(usuarioDto != null)
@@ -49,16 +48,14 @@ namespace ProyectoIt.Controllers
 
         public async Task<IActionResult> GuardarUsuario(UsuariosDto usuarioDto)
         {
-            var baseApi = new BaseApi(_httpClientFactory);
-            await baseApi.PostToApi("Usuarios/CrearUsuario", usuarioDto);
+            await _baseApi.PostToApi("Usuarios/CrearUsuario", usuarioDto);
             return RedirectToAction("Usuarios", "Usuarios");
         }
 
         public async Task<IActionResult> EliminarUsuario([FromBody] UsuariosDto usuarioDto)
         {
-            var baseApi = new BaseApi(_httpClientFactory);
             usuarioDto.Activo = false;
-            await baseApi.PostToApi("Usuarios/CrearUsuario", usuarioDto);
+            await _baseApi.PostToApi("Usuarios/CrearUsuario", usuarioDto);
             return RedirectToAction("Usuarios", "Usuarios");
         }
     }

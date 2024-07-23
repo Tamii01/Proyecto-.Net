@@ -16,5 +16,10 @@ namespace Api.Services
         {
             return await _manager.BuscarListaAsync();
         }
+
+        public async Task<bool> GuardarRol(Roles producto)
+        {
+            return await _manager.Guardar(producto, producto.Id);
+        }
     }
 }

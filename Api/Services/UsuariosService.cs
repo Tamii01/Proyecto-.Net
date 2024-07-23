@@ -1,4 +1,5 @@
-﻿using Data.Dtos;
+﻿using Common.Helpers;
+using Data.Dtos;
 using Data.Entities;
 using Data.Manager;
 
@@ -16,6 +17,8 @@ namespace Api.Services
 		{
 			var usuario = new Usuarios();
 			usuario = crearCuentaDto;
+            usuario.Clave = _manager.BuscarListaAsync().Result.Where(x => x.Id == usuario.Id).FirstOrDefault().Clave == usuario.Clave ? usuario.Clave : EncryptHelper.Encriptar(usuario.Clave) ;
+
 			return await _manager.Guardar(usuario, crearCuentaDto.Id);
 		}
 

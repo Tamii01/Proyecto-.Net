@@ -20,5 +20,12 @@ namespace Api.Controllers
         {
             return await _service.BuscarRoles();
         }
+
+        [HttpPost]
+        [Route("GuardarRol")]
+        public async Task<bool> GuardarRol(Roles rol)
+        {
+            return await _service.GuardarRol(rol);
+        }
     }
 }
