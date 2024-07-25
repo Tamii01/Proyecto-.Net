@@ -1,5 +1,6 @@
 ﻿using Data.Base;
 using Data.Entities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Newtonsoft.Json;
@@ -15,16 +16,18 @@ namespace ProyectoIt.Controllers
             _baseApi = new BaseApi(httpClientFactory);
         }
 
+        [Authorize(Roles = "Usuario")]
         public IActionResult Usuarios()
         {
             return View();
         }
 
 
+        [Authorize(Roles = "Administrador")]
         public async Task<IActionResult> UsuariosAddPartial([FromBody] UsuariosDto usuarioDto)
         {
             var usuariosViewModel = new UsuariosViewModel();
-            var roles = await _baseApi.GetToApi("Roles/BuscarRoles");
+            var roles = await _baseApi.GetToApi("Roles/BuscarRoles", HttpContext.Session.GetString("Token"));
             var resultadoRoles = roles as OkObjectResult;
 
             if(usuarioDto != null)
@@ -46,16 +49,18 @@ namespace ProyectoIt.Controllers
             return PartialView("~/Views/Usuarios/Partial/UsuariosAddPartial.cshtml", usuariosViewModel);
         }
 
+        [Authorize(Roles = "Administrador")]
         public async Task<IActionResult> GuardarUsuario(UsuariosDto usuarioDto)
         {
-            await _baseApi.PostToApi("Usuarios/CrearUsuario", usuarioDto);
+            await _baseApi.PostToApi("Usuarios/CrearUsuario", usuarioDto, HttpContext.Session.GetString("Token"));
             return RedirectToAction("Usuarios", "Usuarios");
         }
 
+        [Authorize(Roles = "Administrador")]
         public async Task<IActionResult> EliminarUsuario([FromBody] UsuariosDto usuarioDto)
         {
             usuarioDto.Activo = false;
-            await _baseApi.PostToApi("Usuarios/CrearUsuario", usuarioDto);
+            await _baseApi.PostToApi("Usuarios/CrearUsuario", usuarioDto, HttpContext.Session.GetString("Token"));
             return RedirectToAction("Usuarios", "Usuarios");
         }
     }

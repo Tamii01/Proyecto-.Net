@@ -1,31 +1,31 @@
-﻿using Common.Helpers;
+﻿using Api.Interfaces;
+using Common.Helpers;
 using Data.Dtos;
 using Data.Entities;
 using Data.Manager;
 
 namespace Api.Services
 {
-	public class UsuariosService
+	public class UsuariosService : IUsuariosService
 	{
 		private readonly UsuariosManager _manager;
+		private Usuarios _usuario;
 
         public UsuariosService()
         {
             _manager = new UsuariosManager();
+            _usuario = new Usuarios();
         }
         public async Task<bool> GuardarUsuario (CrearCuentaDto crearCuentaDto)
 		{
-			var usuario = new Usuarios();
-			usuario = crearCuentaDto;
-            usuario.Clave = _manager.BuscarListaAsync().Result.Where(x => x.Id == usuario.Id).FirstOrDefault().Clave == usuario.Clave ? usuario.Clave : EncryptHelper.Encriptar(usuario.Clave) ;
-
-			return await _manager.Guardar(usuario, crearCuentaDto.Id);
+            _usuario = crearCuentaDto;
+            _usuario.Clave = _manager.BuscarListaAsync().Result.Where(x => x.Id == _usuario.Id).FirstOrDefault().Clave == _usuario.Clave ? _usuario.Clave : EncryptHelper.Encriptar(_usuario.Clave) ;
+			return await _manager.Guardar(_usuario, crearCuentaDto.Id);
 		}
 
 		public async Task<List<Usuarios>> BuscarUsuarios()
 		{
 			return await _manager.BuscarListaAsync();
-
         }
 	}
 }

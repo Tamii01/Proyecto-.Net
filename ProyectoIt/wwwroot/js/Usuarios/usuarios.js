@@ -1,8 +1,9 @@
-﻿
+﻿let token = getCookie("Token");
 let table = $("#usuarios").DataTable({
     ajax: {
         url: "https://localhost:7059/api/Usuarios/BuscarUsuario",
-        dataSrc: ''
+        dataSrc: '',
+        headers: {"Authorization": "Bearer " + token}
     },
     columns: [
         { data: 'id', title: 'Id' },

@@ -1,10 +1,11 @@
 ﻿using Data.Dtos;
 using Data.Entities;
 using Data.Manager;
+using ProyectoIt.Interfaces;
 
 namespace ProyectoIt.Services
 {
-    public class UsuariosService
+    public class UsuariosService : IUsuarioService
     {
         private readonly UsuariosManager _manager;
 

@@ -1,5 +1,6 @@
 ﻿using Data.Base;
 using Data.Entities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Newtonsoft.Json;
@@ -16,12 +17,14 @@ namespace ProyectoIt.Controllers
             _baseApi = new BaseApi(httpClientFactory);
         }
 
+
+        [Authorize(Roles = "Usuario")]
         public IActionResult Servicios()
         {
             return View();
         }
 
-
+        [Authorize(Roles = "Administrador")]
         public async Task<IActionResult> ServiciosAddPartial([FromBody] ServiciosDto servicioDto)
         {
             var serviciosViewModel = new ServiciosViewModel();
@@ -32,16 +35,18 @@ namespace ProyectoIt.Controllers
             return PartialView("~/Views/Servicios/Partial/ServiciosAddPartial.cshtml", serviciosViewModel);
         }
 
+        [Authorize(Roles = "Administrador")]
         public async Task<IActionResult> GuardarServicio(ServiciosDto rolDto)
         {
-            await _baseApi.PostToApi("Servicios/GuardarServicio", rolDto);
+            await _baseApi.PostToApi("Servicios/GuardarServicio", rolDto, HttpContext.Session.GetString("Token"));
             return RedirectToAction("Servicios", "Servicios");
         }
 
+        [Authorize(Roles = "Administrador")]
         public async Task<IActionResult> EliminarServicio([FromBody] ServiciosDto rolDto)
         {
             rolDto.Activo = false;
-            await _baseApi.PostToApi("Servicios/GuardarServicio", rolDto);
+            await _baseApi.PostToApi("Servicios/GuardarServicio", rolDto, HttpContext.Session.GetString("Token"));
             return RedirectToAction("Servicios", "Servicios");
         }
     }

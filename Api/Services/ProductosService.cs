@@ -1,12 +1,13 @@
-﻿using Common.Helpers;
+﻿using Api.Interfaces;
+using Common.Helpers;
 using Data.Dtos;
 using Data.Entities;
 using Data.Manager;
 
 namespace Api.Services
 {
-	public class ProductosService
-	{
+	public class ProductosService : IProductosService
+    {
 		private readonly ProductosManager _manager;
 
         public ProductosService()

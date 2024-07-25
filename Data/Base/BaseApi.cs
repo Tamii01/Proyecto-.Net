@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System.Net.Http.Json;
+using System.Net.Http.Headers;
 
 namespace Data.Base
 {
@@ -12,9 +13,14 @@ namespace Data.Base
 			_httpClientFactory = httpClientFactory;
 		}
 
-		public async Task<IActionResult> PostToApi(string metodoController, object model)
+		public async Task<IActionResult> PostToApi(string metodoController, object model, string token = "")
 		{
 			var client = _httpClientFactory.CreateClient("useApi");
+
+			if(token != "")
+			{
+				client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", token);
+			}
 
 			var response = await client.PostAsJsonAsync(metodoController, model);
 
@@ -27,9 +33,15 @@ namespace Data.Base
 			return BadRequest(response);
 		}
 
-        public async Task<IActionResult> GetToApi(string metodoController)
+        public async Task<IActionResult> GetToApi(string metodoController, string token = "")
         {
             var client = _httpClientFactory.CreateClient("useApi");
+
+            if (token != "")
+            {
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", token);
+            }
+
 
             var response = await client.GetAsync(metodoController);
 

@@ -14,6 +14,8 @@ namespace ProyectoIt
 			// Add services to the container.
 			builder.Services.AddControllersWithViews();
 
+            builder.Services.AddSignalR();
+
             builder.Services.AddHttpClient("useApi", config =>
             {
                 config.BaseAddress = new Uri(builder.Configuration["Url:Api"]);
@@ -42,7 +44,16 @@ namespace ProyectoIt
 
             builder.Services.AddAuthorization(option =>
             {
+                option.AddPolicy("ADMINISTRADORES", policy =>
+                {
+                    policy.RequireRole("Administrador");
+                });
 
+                option.AddPolicy("USUARIOS", policy =>
+                {
+                    policy.RequireRole("Usuario");
+
+                });
             });
 
             builder.Services.AddSession();
@@ -71,6 +82,7 @@ namespace ProyectoIt
                 name: "default",
                 pattern: "{controller=Login}/{action=Login}/{id?}");
 
+            app.MapHub<ChatHub>("/Chat");
             app.Run();
         }
     }

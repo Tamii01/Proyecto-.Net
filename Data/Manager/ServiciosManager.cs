@@ -24,7 +24,12 @@ namespace Data.Manager
 
         public async override Task<List<Servicios>> BuscarListaAsync()
         {
-            return await contextSingleton.Servicios.Where(x => x.Activo == true).ToListAsync();
+            return  contextSingleton.Servicios.FromSqlRaw("ObtenerServicios").ToList();
+        }
+
+        public async Task<bool> GuardarServicio (Servicios servicio)
+        {
+            return contextSingleton.Database.ExecuteSqlRaw($"GuardarServicios {servicio.Id}, {servicio.Nombre}, {servicio.Activo}") > 0;
         }
     }
 }

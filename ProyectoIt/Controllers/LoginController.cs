@@ -11,21 +11,22 @@ using System.Net.Mail;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.Google;
 using System.Security.Claims;
+using ProyectoIt.ViewModels;
 
 namespace ProyectoIt.Controllers
 {
 	public class LoginController : Controller
 	{
 
-		private readonly IHttpClientFactory _httpClientFactory;
 		private readonly IConfiguration _configuration;
 		private readonly SmtpClient _smtpClient;
+		private readonly BaseApi _baseAPi;
 
 		public LoginController(IHttpClientFactory httpClientFactory, IConfiguration configuration )
 		{
-			_httpClientFactory = httpClientFactory;
 			_configuration = configuration;
             _smtpClient = new SmtpClient();
+			_baseAPi = new BaseApi(httpClientFactory);
         }
 
 		public ActionResult CrearCuenta()
@@ -43,8 +44,7 @@ namespace ProyectoIt.Controllers
 
 		public async Task<ActionResult> CrearUsuario(CrearCuentaDto crearUsuarioDto)
 		{
-			var baseApi = new BaseApi(_httpClientFactory);
-			var response = await baseApi.PostToApi("Usuarios/CrearUsuario", crearUsuarioDto);
+			var response = await _baseAPi.PostToApi("Usuarios/CrearUsuario", crearUsuarioDto, HttpContext.Session.GetString("Token"));
 
 			var responseLogin = response as OkObjectResult;
 			if (responseLogin != null && Convert.ToBoolean(responseLogin.Value) == true)
@@ -61,19 +61,18 @@ namespace ProyectoIt.Controllers
 
 		public async Task<ActionResult> LoginLocal(LoginDto login)
 		{
+			var token = await _baseAPi.PostToApi("Authenticate/Login", login);
+			var resultadoLogin = token as OkObjectResult;
 
-			//var baseapi = new BaseApi(_httpClientFactory);
-			//var token = await baseapi.PostToApi("Authenticate/Login", login);
-			//var resultadoLogin = token as OkObjectResult;
-
-			var usuariosManager = new UsuariosManager();
-			var usuarios = usuariosManager.BuscarAsync(login);
-			if (usuarios.Result != null)
+			
+			if (resultadoLogin != null)
 			{
-				var identity = new ClaimsIdentity(CookieAuthenticationDefaults.AuthenticationScheme, ClaimTypes.Name, ClaimTypes.Role);
-				Claim claimNombre = new(ClaimTypes.Name, usuarios.Result.Nombre);
-				Claim claimRole = new(ClaimTypes.Role, usuarios.Result.Roles.Nombre);
-				Claim claimEmail= new(ClaimTypes.Email, usuarios.Result.Mail);
+				var resultadoSplit = resultadoLogin.Value.ToString().Split(";");
+
+                var identity = new ClaimsIdentity(CookieAuthenticationDefaults.AuthenticationScheme, ClaimTypes.Name, ClaimTypes.Role);
+				Claim claimNombre = new(ClaimTypes.Name, resultadoSplit[1]);
+				Claim claimRole = new(ClaimTypes.Role, resultadoSplit[2]);
+				Claim claimEmail= new(ClaimTypes.Email, resultadoSplit[3]);
 
 				identity.AddClaim(claimNombre);
 				identity.AddClaim(claimRole);
@@ -84,8 +83,13 @@ namespace ProyectoIt.Controllers
 				await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, usuarioPrincipal, new AuthenticationProperties
 				{
 					ExpiresUtc = DateTime.Now.AddYears(1),
-				}); 
-				return RedirectToAction("Index", "Home");
+				});
+
+				HttpContext.Session.SetString("Token", resultadoSplit[0]);
+
+				var homeViewModel = new HomeViewModel();
+				homeViewModel.Token = resultadoSplit[0];
+				return View("~/Views/Home/Index.cshtml", homeViewModel);
 			}
 			else
 			{

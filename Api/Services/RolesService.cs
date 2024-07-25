@@ -1,9 +1,10 @@
-﻿using Data.Entities;
+﻿using Api.Interfaces;
+using Data.Entities;
 using Data.Manager;
 
 namespace Api.Services
 {
-    public class RolesService
+    public class RolesService : IRolesService
     {
         private readonly RolesManager _manager;
 
@@ -17,9 +18,9 @@ namespace Api.Services
             return await _manager.BuscarListaAsync();
         }
 
-        public async Task<bool> GuardarRol(Roles producto)
+        public async Task<bool> GuardarRol(Roles rol)
         {
-            return await _manager.Guardar(producto, producto.Id);
+            return await _manager.Guardar(rol, rol.Id);
         }
     }
 }

@@ -1,9 +1,10 @@
-﻿using Data.Entities;
+﻿using Api.Interfaces;
+using Data.Entities;
 using Data.Manager;
 
 namespace Api.Services
 {
-    public class ServiciosService
+    public class ServiciosService : IServiciosService
     {
         private readonly ServiciosManager _manager;
 
@@ -17,9 +18,9 @@ namespace Api.Services
             return await _manager.BuscarListaAsync();
         }
 
-        public async Task<bool> GuardarRol(Servicios servicio)
+        public async Task<bool> GuardarServicio(Servicios servicio)
         {
-            return await _manager.Guardar(servicio, servicio.Id);
+            return await _manager.GuardarServicio(servicio);
         }
     }
 }

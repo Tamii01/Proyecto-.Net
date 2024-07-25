@@ -1,9 +1,11 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Data.Entities;
 using Api.Services;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Api.Controllers
 {
+    [Authorize]
     [ApiController]
     [Route("api/[controller]")]
     public class ServiciosController 
@@ -22,10 +24,10 @@ namespace Api.Controllers
         }
 
         [HttpPost]
-        [Route("GuardarRol")]
-        public async Task<bool> GuardarRol(Servicios servicio)
+        [Route("GuardarServicio")]
+        public async Task<bool> GuardarServicio(Servicios servicio)
         {
-            return await _service.GuardarRol(servicio);
+            return await _service.GuardarServicio(servicio);
         }
     }
 }

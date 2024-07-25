@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace Api.Controllers
 {
+    [Authorize]
     [ApiController]
     [Route("api/[controller]")]
     public class AuthenticateController : ControllerBase
@@ -42,7 +43,7 @@ namespace Api.Controllers
 
                 var token = CrearToken(claims);
 
-                return Ok(new JwtSecurityTokenHandler().WriteToken(token).ToString());
+                return Ok(new JwtSecurityTokenHandler().WriteToken(token).ToString() + ";" + validarUsuario.Nombre + ";" + validarUsuario.Roles.Nombre + ";" + validarUsuario.Mail);
 
             }
             else
