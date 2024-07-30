@@ -1,7 +1,8 @@
 ﻿let token = getCookie("Token");
+let ajaxUrl = getCookie("AjaxUrl");
 let table = $("#roles").DataTable({
     ajax: {
-        url: "https://localhost:7059/api/Roles/BuscarRoles",
+        url: `${ajaxUrl}Roles/BuscarRoles`,
         dataSrc: '',
         headers: { "Authorization": "Bearer " + token }
     },

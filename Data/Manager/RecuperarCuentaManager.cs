@@ -14,30 +14,13 @@ namespace Data.Manager
         }
         public async override Task<Usuarios> BuscarAsync(LoginDto loginDto)
         {
-            try
-            {
-                return loginDto.Password != null ? await contextSingleton.Usuarios.FirstOrDefaultAsync(x => x.Codigo == loginDto.Codigo && x.Mail == loginDto.Mail) : await contextSingleton.Usuarios.FirstOrDefaultAsync(x => x.Mail == loginDto.Mail);
-
-            }
-            catch (Exception ex)
-            {
-                GenerateLogHelper.LogError(ex, "RecuperarCuentaManager", "BuscarAsync");
-                return null;
-            }
-
+            return loginDto.Password != null ? await contextSingleton.Usuarios.FirstOrDefaultAsync(x => x.Codigo == loginDto.Codigo && x.Mail == loginDto.Mail) : await contextSingleton.Usuarios.FirstOrDefaultAsync(x => x.Mail == loginDto.Mail);
         }
 
         public async override Task<List<Usuarios>> BuscarListaAsync()
         {
-            try
-            {
-                return await contextSingleton.Usuarios.Where(x => x.Activo == true).ToListAsync();
-            }
-            catch (Exception ex)
-            {
-                GenerateLogHelper.LogError(ex, "RecuperarCuentaManager", "BuscarListaAsync");
-                return null;
-            }
+
+            return await contextSingleton.Usuarios.Where(x => x.Activo == true).ToListAsync();
 
         }
     }

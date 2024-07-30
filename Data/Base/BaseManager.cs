@@ -28,45 +28,27 @@ namespace Data.Base
         //Utiliza entity Framework para guardar un usuario en la base.
         public async Task<bool> Guardar(T entity, int id)
         {
-            try
+            if (id == 0)
             {
-
-                if (id == 0)
-                {
-                    contextSingleton.Entry(entity).State = EntityState.Added;
-                }
-                else
-                {
-                    contextSingleton.Entry(entity).State = EntityState.Modified;
-                }
-
-                var resultado = await contextSingleton.SaveChangesAsync() > 0;
-
-                contextSingleton.Entry(entity).State = EntityState.Detached;
-                return resultado;
+                contextSingleton.Entry(entity).State = EntityState.Added;
             }
-            catch (Exception ex)
+            else
             {
-                GenerateLogHelper.LogError(ex, "BaseManager", "Guardar");
-                return false;
+                contextSingleton.Entry(entity).State = EntityState.Modified;
             }
 
+            var resultado = await contextSingleton.SaveChangesAsync() > 0;
+
+            contextSingleton.Entry(entity).State = EntityState.Detached;
+            return resultado;
 
         }
 
         public async Task<bool> Eliminar(T entity)
         {
-            try
-            {
-                contextSingleton.Entry(entity).State = EntityState.Modified;
-                var resultado = await contextSingleton.SaveChangesAsync() > 0;
-                return resultado;
-            }
-            catch (Exception ex)
-            {
-                GenerateLogHelper.LogError(ex, "BaseManager", "Guardar");
-                return false;
-            }
+            contextSingleton.Entry(entity).State = EntityState.Modified;
+            var resultado = await contextSingleton.SaveChangesAsync() > 0;
+            return resultado;
 
         }
 

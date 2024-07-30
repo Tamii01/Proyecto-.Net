@@ -1,4 +1,9 @@
-﻿.editarRol {
+﻿.containerInputCheckbox{
+    display:flex;
+    align-items: center
+}
+
+.editarRol {
     color: blue;
     font-size: 20px;
     margin-right: 10px;
@@ -8,3 +13,4 @@
     color: red;
     font-size: 20px
 }
+

@@ -4,19 +4,20 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Newtonsoft.Json;
+using ProyectoIt.Services;
 using ProyectoIt.ViewModels;
 
 namespace ProyectoIt.Controllers
 {
     public class UsuariosController : Controller
     {
-        private readonly BaseApi _baseApi;
+        private readonly UsuariosService _usuariosService;
         public UsuariosController(IHttpClientFactory httpClientFactory)
         {
-            _baseApi = new BaseApi(httpClientFactory);
+            _usuariosService = new UsuariosService(httpClientFactory);
         }
 
-        [Authorize(Roles = "Usuario")]
+        [Authorize(Roles = "Usuario, Administrador")]
         public IActionResult Usuarios()
         {
             return View();
@@ -26,25 +27,7 @@ namespace ProyectoIt.Controllers
         [Authorize(Roles = "Administrador")]
         public async Task<IActionResult> UsuariosAddPartial([FromBody] UsuariosDto usuarioDto)
         {
-            var usuariosViewModel = new UsuariosViewModel();
-            var roles = await _baseApi.GetToApi("Roles/BuscarRoles", HttpContext.Session.GetString("Token"));
-            var resultadoRoles = roles as OkObjectResult;
-
-            if(usuarioDto != null)
-            {
-                usuariosViewModel = usuarioDto;
-            }
-
-            if (resultadoRoles != null)
-            {
-                var listaRoles = JsonConvert.DeserializeObject<List<Roles>>(resultadoRoles.Value.ToString());
-                var listaItemsRoles = new List<SelectListItem>();
-                foreach (var list in listaRoles)
-                {
-                    listaItemsRoles.Add(new SelectListItem {Text = list.Nombre, Value = list.Id.ToString() });
-                }
-                usuariosViewModel.Lista_Roles = listaItemsRoles;
-            }
+            var usuariosViewModel = await _usuariosService.ListarRolesUsuarios(usuarioDto, HttpContext.Session.GetString("Token"));
 
             return PartialView("~/Views/Usuarios/Partial/UsuariosAddPartial.cshtml", usuariosViewModel);
         }
@@ -52,7 +35,7 @@ namespace ProyectoIt.Controllers
         [Authorize(Roles = "Administrador")]
         public async Task<IActionResult> GuardarUsuario(UsuariosDto usuarioDto)
         {
-            await _baseApi.PostToApi("Usuarios/CrearUsuario", usuarioDto, HttpContext.Session.GetString("Token"));
+            _usuariosService.GuardarUsuario(usuarioDto, HttpContext.Session.GetString("Token"));
             return RedirectToAction("Usuarios", "Usuarios");
         }
 
@@ -60,7 +43,7 @@ namespace ProyectoIt.Controllers
         public async Task<IActionResult> EliminarUsuario([FromBody] UsuariosDto usuarioDto)
         {
             usuarioDto.Activo = false;
-            await _baseApi.PostToApi("Usuarios/CrearUsuario", usuarioDto, HttpContext.Session.GetString("Token"));
+            _usuariosService.EliminarUsuario(usuarioDto, HttpContext.Session.GetString("Token"));
             return RedirectToAction("Usuarios", "Usuarios");
         }
     }

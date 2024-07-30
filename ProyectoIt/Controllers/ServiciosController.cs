@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Newtonsoft.Json;
+using ProyectoIt.Services;
 using ProyectoIt.ViewModels;
 using System.Net.Http;
 
@@ -11,14 +12,14 @@ namespace ProyectoIt.Controllers
 {
     public class ServiciosController : Controller
     {
-        private readonly BaseApi _baseApi;
+        private readonly ServiciosService _serviciosService;
         public ServiciosController(IHttpClientFactory httpClientFactory)
         {
-            _baseApi = new BaseApi(httpClientFactory);
+            _serviciosService = new ServiciosService(httpClientFactory);
         }
 
 
-        [Authorize(Roles = "Usuario")]
+        [Authorize(Roles = "Usuario, Administrador")]
         public IActionResult Servicios()
         {
             return View();
@@ -38,7 +39,7 @@ namespace ProyectoIt.Controllers
         [Authorize(Roles = "Administrador")]
         public async Task<IActionResult> GuardarServicio(ServiciosDto rolDto)
         {
-            await _baseApi.PostToApi("Servicios/GuardarServicio", rolDto, HttpContext.Session.GetString("Token"));
+            _serviciosService.GuardarServicio(rolDto, HttpContext.Session.GetString("Token"));
             return RedirectToAction("Servicios", "Servicios");
         }
 
@@ -46,7 +47,7 @@ namespace ProyectoIt.Controllers
         public async Task<IActionResult> EliminarServicio([FromBody] ServiciosDto rolDto)
         {
             rolDto.Activo = false;
-            await _baseApi.PostToApi("Servicios/GuardarServicio", rolDto, HttpContext.Session.GetString("Token"));
+            _serviciosService.EliminarServicio(rolDto, HttpContext.Session.GetString("Token"));
             return RedirectToAction("Servicios", "Servicios");
         }
     }

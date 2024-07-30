@@ -15,34 +15,14 @@ namespace Data.Manager
         }
         public async override Task<Productos> BuscarAsync(LoginDto loginDto)
         {
-            try
-            {
-                throw new NotImplementedException();
+            throw new NotImplementedException();
 
-            }
-            catch (Exception ex)
-
-            {
-                GenerateLogHelper.LogError(ex, "ProductosManager", "BuscarAsync");
-                return null;
-            }
         }
 
 
         public async override Task<List<Productos>> BuscarListaAsync()
         {
-            try
-            {
-                return await contextSingleton.Productos.Where(x => x.Activo == true).ToListAsync();
-
-            }
-            catch (Exception ex)
-
-            {
-                GenerateLogHelper.LogError(ex, "ProductosManager", "BuscarListaAsync");
-                return null;
-            }
-
+            return await contextSingleton.Productos.Where(x => x.Activo == true).ToListAsync();
         }
     }
 }

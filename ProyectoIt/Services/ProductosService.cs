@@ -2,10 +2,11 @@
 using Data.Entities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using ProyectoIt.Interfaces;
 
 namespace ProyectoIt.Services
 {
-    public class ProductosService
+    public class ProductosService : IProductosService
     {
 
         private readonly BaseApi _baseAPi;

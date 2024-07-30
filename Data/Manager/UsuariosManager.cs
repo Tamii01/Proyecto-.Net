@@ -15,47 +15,19 @@ namespace Data.Manager
         }
         public async override Task<Usuarios> BuscarAsync(LoginDto loginDto)
         {
-            try
-            {
-                return await contextSingleton.Usuarios.Include(x=> x.Roles).FirstOrDefaultAsync(x => x.Activo == true && x.Mail == loginDto.Mail && x.Clave == EncryptHelper.Encriptar(loginDto.Password));
+            return await contextSingleton.Usuarios.Include(x => x.Roles).FirstOrDefaultAsync(x => x.Activo == true && x.Mail == loginDto.Mail && x.Clave == EncryptHelper.Encriptar(loginDto.Password));
 
-            }
-            catch (Exception ex)
-
-            {
-                GenerateLogHelper.LogError(ex, "UsuariosManager", "BuscarAsync");
-                return null;
-            }
         }
 
         public async Task<Usuarios> BuscarUsuarioAsync(LoginDto loginDto)
         {
-            try
-            {
-                return await contextSingleton.Usuarios.FirstOrDefaultAsync(x => x.Activo == true && x.Mail == loginDto.Mail);
-            }
-            catch (Exception ex)
-
-            {
-                GenerateLogHelper.LogError(ex, "UsuariosManager", "BuscarUsuarioAsync");
-                return null;
-            }
+            return await contextSingleton.Usuarios.FirstOrDefaultAsync(x => x.Activo == true && x.Mail == loginDto.Mail);
         }
 
         public async override Task<List<Usuarios>> BuscarListaAsync()
         {
-            try
-            {
-                return await contextSingleton.Usuarios.Where(x => x.Activo == true).Include(x=> x.Roles).ToListAsync();
 
-            }
-            catch (Exception ex)
-
-            {
-                GenerateLogHelper.LogError(ex, "UsuariosManager", "BuscarListaAsync");
-                return null;
-            }
-
+            return await contextSingleton.Usuarios.Where(x => x.Activo == true).Include(x => x.Roles).ToListAsync();
         }
     }
 }

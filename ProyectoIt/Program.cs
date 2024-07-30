@@ -2,6 +2,7 @@ using Data;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.Google;
+using ProyectoIt.Middlewares;
 
 namespace ProyectoIt
 {
@@ -83,6 +84,8 @@ namespace ProyectoIt
                 pattern: "{controller=Login}/{action=Login}/{id?}");
 
             app.MapHub<ChatHub>("/Chat");
+
+            app.UseMiddleware<ExceptionMiddleware>();
             app.Run();
         }
     }

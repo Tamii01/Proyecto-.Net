@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Newtonsoft.Json;
+using ProyectoIt.Services;
 using ProyectoIt.ViewModels;
 using System.Net.Http;
 
@@ -11,13 +12,13 @@ namespace ProyectoIt.Controllers
 {
     public class RolesController : Controller
     {
-        private readonly BaseApi _baseApi;
+        private readonly RolesService _rolesService;
         public RolesController(IHttpClientFactory httpClientFactory)
         {
-            _baseApi = new BaseApi(httpClientFactory);
+            _rolesService = new RolesService(httpClientFactory);
         }
 
-        [Authorize(Roles = "Usuarios")]
+        [Authorize(Roles = "Usuario, Administrador")]
         public IActionResult Roles()
         {
             return View();
@@ -37,7 +38,7 @@ namespace ProyectoIt.Controllers
         [Authorize(Roles = "Administrador")]
         public async Task<IActionResult> GuardarRol(RolesDto rolDto)
         {
-            await _baseApi.PostToApi("Roles/GuardarRol", rolDto, HttpContext.Session.GetString("Token"));
+            _rolesService.GuardarRol(rolDto, HttpContext.Session.GetString("Token"));
             return RedirectToAction("Roles", "Roles");
         }
 
@@ -45,7 +46,7 @@ namespace ProyectoIt.Controllers
         public async Task<IActionResult> EliminarRol([FromBody] RolesDto rolDto)
         {
             rolDto.Activo = false;
-            await _baseApi.PostToApi("Roles/GuardarRol", rolDto, HttpContext.Session.GetString("Token"));
+             _rolesService.EliminarRol(rolDto, HttpContext.Session.GetString("Token"));
             return RedirectToAction("Roles", "Roles");
         }
     }

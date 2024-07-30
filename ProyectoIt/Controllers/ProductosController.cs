@@ -9,17 +9,15 @@ namespace ProyectoIt.Controllers
 {
     public class ProductosController : Controller
     {
-        private readonly BaseApi _baseAPi;
         private readonly ProductosService _productosService;
         public ProductosController(IHttpClientFactory httpClientFactory)
         {
-            _baseAPi = new BaseApi(httpClientFactory);
             _productosService = new ProductosService(httpClientFactory);
         }
 
         [Authorize(Roles = "Usuarios, Administrador")]
         public IActionResult Productos()
-        {
+        { 
             return View();
         }
 
