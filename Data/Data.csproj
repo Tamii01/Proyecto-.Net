@@ -6,11 +6,4 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
-<<<<<<< HEAD
-  <ItemGroup>
-    <Folder Include="Helpers\" />
-  </ItemGroup>
-
-=======
->>>>>>> profe/master
 </Project>
