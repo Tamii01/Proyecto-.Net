@@ -1,0 +1,9 @@
+﻿@model string
+
+
+<input type="password" name="@ViewData.TemplateInfo.GetFullHtmlFildName("")"
+       id="@ViewData.TemplateInfo.GetFullHtmlFildName("")"
+       value="@Model"
+       class="form-control @ViewData["additional-classes"]"
+       required="@ViewData["required"]"
+       />
